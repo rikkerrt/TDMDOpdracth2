@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace HUELampen.Domain.ClientInterface
 {
-    public interface IHTTPSClient
+    public interface IHTTPClient
     {
-        Task ConnectAsync();
-        Task<string> ReceiveDataAsync();
-        Task SendAsync(string data);
-        Task CloseAsync();
+        Task<Light?> GetAllLightsAsync();
     }
 }

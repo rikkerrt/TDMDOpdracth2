@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using HUELampen.Domain.ClientInterface;
 
 namespace HUELampenOpdracht2
 {
@@ -17,6 +18,7 @@ namespace HUELampenOpdracht2
 
 #if DEBUG
     		builder.Logging.AddDebug();
+            builder.Services.AddHttpClient<IHTTPClient>
 #endif
 
             return builder.Build();

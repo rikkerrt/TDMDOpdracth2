@@ -62,4 +62,10 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\HUELampen.Domain\HUELampen.Domain.csproj" />
+	  <ProjectReference Include="..\HUELampen.Infrastructure\HUELampen.Infrastructure.csproj" />
+	  <ProjectReference Include="..\HUELampen.ViewModels\HUELampen.ViewModels.csproj" />
+	</ItemGroup>
+
 </Project>
