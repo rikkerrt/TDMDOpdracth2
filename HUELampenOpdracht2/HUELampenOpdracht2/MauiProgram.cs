@@ -1,5 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
+
 using HUELampen.Domain.ClientInterface;
+using HUELampen.Infrastructure.BridgeConnection;
+
 
 namespace HUELampenOpdracht2
 {
@@ -17,8 +20,12 @@ namespace HUELampenOpdracht2
                 });
 
 #if DEBUG
-    		builder.Logging.AddDebug();
-            builder.Services.AddHttpClient<IHTTPClient>
+            builder.Logging.AddDebug();
+            builder.Services.AddHttpClient<IHTTPClient, BridgeConnection>(o =>
+            {
+                o.BaseAddress = new Uri("http://localhost/api/newdeveloper");
+                o.Timeout = TimeSpan.FromSeconds(3);
+            });
 #endif
 
             return builder.Build();

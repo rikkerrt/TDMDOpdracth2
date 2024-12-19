@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HUELampen.Domain
 {
-    internal class Light
+    public class Light
     {
     }
 }
