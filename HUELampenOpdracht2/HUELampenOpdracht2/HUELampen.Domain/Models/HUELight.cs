@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TdmdHueApp.Domain.Model
+namespace HUELampenOpdracht2.HUELampen.Domain.Models
 {
     public class HUELight
     {

@@ -5,20 +5,21 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Text.Json;
-using TdmdHueApp.Domain.Model;
 using HUELampen.Infrastructure;
+using HUELampen.Domain;
 using static Microsoft.Maui.ApplicationModel.Permissions;
 using HUELampenOpdracht2.HUELampen.Domain.Models;
 
 
-namespace TdmdHueApp.Domain.Services
+namespace HUELampenOpdracht2.HUELampen.ViewModel
 {
-    public partial class ViewModel : ObservableObject
+
+    public partial class HUEappViewModel : ObservableObject
     {
         private IBridgeConnector BridgeConnector;
         private ConnectionType _currentConnectionType = ConnectionType.None;
 
-        public ViewModel(IPreferences preferences, IBridgeConnector bridgeConnectorHueLights)
+        public HUEappViewModel(IPreferences preferences, IBridgeConnector bridgeConnectorHueLights)
         {
             BridgeConnector = bridgeConnectorHueLights;
             lights = new ObservableCollection<HUELight>();
@@ -161,10 +162,6 @@ namespace TdmdHueApp.Domain.Services
                 IsEmulatorButtonEnabled = true;
                 return;
             }
-
         }
-
-
-
     }
 }
