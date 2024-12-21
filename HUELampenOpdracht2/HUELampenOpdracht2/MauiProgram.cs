@@ -23,7 +23,7 @@ namespace HUELampenOpdracht2
             builder.Logging.AddDebug();
             builder.Services.AddHttpClient<IHTTPClient, BridgeConnection>(o =>
             {
-                o.BaseAddress = new Uri("http://localhost/api/newdeveloper");
+                o.BaseAddress = new Uri("http://localhost/api/newdeveloper/");
                 o.Timeout = TimeSpan.FromSeconds(3);
             });
 #endif
