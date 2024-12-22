@@ -1,12 +1,15 @@
+using Moq;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using TdmdHueApp.Domain.Model;
+using TdmdHueApp.Domain.Services;
 
-
-namespace TestProject1
+namespace UnitTestProject
 {
     public class TestsHueApp
     {
 
-        private   = new(1, true, 20, 200, 2000);
+        private HueLight lamp = new(1, true, 20, 200, 2000);
         private Lamp lamp2 = new(2, false, 10, 100, 1000);
         private Lamp lamp3 = new(1, true, 20, 200, 2000);
 
@@ -20,11 +23,10 @@ namespace TestProject1
             Assert.Equal(20, lamp.Brightness);
             Assert.Equal(200, lamp.Saturation);
             Assert.Equal(2000, lamp.Hue);
-        }
+        }       
 
-        [Fact]
-        public void ExtractUsernameTest()
-        {
+        [Fact] 
+        public void ExtractUsernameTest() {
 
             var mockPreferences = new Mock<IPreferences>();
             var testJson = " [ { \"success\": { \"username\": \"1028d66426293e821ecfd9ef1a0731df\" } } ]";
@@ -34,15 +36,14 @@ namespace TestProject1
             extractUsername.setUsername(testJson);
             Debug.WriteLine(extractUsername.ToString());
             mockPreferences.Verify(
-            p => p.Set("username", "1028d664fd9ef1a0731df", null),
+            p => p.Set("username", "1028d664fd9ef1a0731df",null),
             Times.Once,
             "Username was not correctly stored in preferences."
         );
         }
 
         [Fact]
-        public void setSelectedLampTest()
-        {
+        public void setSelectedLampTest() {
 
             IPreferences preferences = new Mock<IPreferences>().Object;
             IBridgeConnectorHueLights bridgeConnectorHueLights = new Mock<IBridgeConnectorHueLights>().Object;
@@ -54,19 +55,18 @@ namespace TestProject1
 
             viewModel.SetSelectedLamp(lamp2);
             Assert.NotEqual(lamp, viewModel.SelectedLamp);
-            Assert.Equal(lamp2, viewModel.SelectedLamp);
+            Assert.Equal(lamp2,viewModel.SelectedLamp);
         }
 
         [Fact]
-        public async Task SendApiLinkErrorTest()
-        {
+        public async Task SendApiLinkErrorTest() {
 
             var mockBridgeConnector = new Mock<IBridgeConnectorHueLights>();
             mockBridgeConnector
                 .Setup(b => b.SendApiLinkAsync())
                 .ReturnsAsync("error: connection failed");
 
-            ViewModel viewModel = new(new Mock<IPreferences>().Object, mockBridgeConnector.Object);
+            ViewModel viewModel = new(new Mock<IPreferences>().Object,mockBridgeConnector.Object);
 
             await viewModel.SendApiLink();
 
@@ -77,14 +77,13 @@ namespace TestProject1
         }
 
         [Fact]
-        public async Task namSendApiLinkSuccesTeste()
-        {
+        public async Task namSendApiLinkSuccesTeste() {
             var mockBridgeConnector = new Mock<IBridgeConnectorHueLights>();
             mockBridgeConnector
                 .Setup(b => b.SendApiLinkAsync())
                 .ReturnsAsync("success: connection established");
 
-            ViewModel viewModel = new(new Mock<IPreferences>().Object, mockBridgeConnector.Object);
+            ViewModel viewModel = new (new Mock<IPreferences>().Object,mockBridgeConnector.Object);
 
             await viewModel.SendApiLink();
 
@@ -94,8 +93,7 @@ namespace TestProject1
         }
 
         [Fact]
-        public async Task SendApiBridgeErrorTest()
-        {
+        public async Task SendApiBridgeErrorTest() {
             var mockBridgeConnector = new Mock<IBridgeConnectorHueLights>();
             mockBridgeConnector
                 .Setup(b => b.SendApiLinkAsync())
@@ -111,14 +109,13 @@ namespace TestProject1
         }
 
         [Fact]
-        public async Task SendApiBridgeSuccesTest()
-        {
+        public async Task SendApiBridgeSuccesTest() {
             var mockBridgeConnector = new Mock<IBridgeConnectorHueLights>();
             mockBridgeConnector
                 .Setup(b => b.SendApiLinkAsync())
                 .ReturnsAsync("success: connected");
 
-            ViewModel viewModel = new(new Mock<IPreferences>().Object, mockBridgeConnector.Object);
+            ViewModel viewModel = new (new Mock<IPreferences>().Object, mockBridgeConnector.Object);
 
             await viewModel.SendApiBridge();
 
@@ -128,14 +125,13 @@ namespace TestProject1
         }
 
         [Fact]
-        public async Task GetLightsErrorTest()
-        {
+        public async Task GetLightsErrorTest() {
             var mockBridgeConnector = new Mock<IBridgeConnectorHueLights>();
             mockBridgeConnector
                 .Setup(b => b.GetAllLightIDsAsync())
                 .ReturnsAsync("error: connection failed");
 
-            ViewModel viewModel = new(new Mock<IPreferences>().Object, mockBridgeConnector.Object);
+            ViewModel viewModel = new (new Mock<IPreferences>().Object, mockBridgeConnector.Object);
 
             await viewModel.GetLights();
 
@@ -146,8 +142,7 @@ namespace TestProject1
         }
 
         [Fact]
-        public async Task GetLightsCorrectJsonParse()
-        {
+        public async Task GetLightsCorrectJsonParse() {
             var jsonResponse = @"
                  {
                      ""1"": { ""state"": { ""on"": true, ""bri"": 200, ""sat"": 150, ""hue"": 30000 } },
@@ -159,7 +154,7 @@ namespace TestProject1
                 .Setup(b => b.GetAllLightIDsAsync())
                 .ReturnsAsync(jsonResponse);
 
-            ViewModel vieModel = new(new Mock<IPreferences>().Object, mockBridgeConnector.Object);
+            ViewModel vieModel = new ( new Mock<IPreferences>().Object, mockBridgeConnector.Object);
 
             await vieModel.GetLights();
 
@@ -186,7 +181,7 @@ namespace TestProject1
             var jsonResponse = @"
                {
                   ""1"": { ""state"": { ""on"": true, ""bri"": 200, ""sat"": 150, ""hue"": 30000 } },
-                  ""1"": { ""state"": { ""on"": true, ""bri"": 200, ""sat"": 150, ""hue"": 30000 } } 
+                  ""1"": { ""state"": { ""on"": true, ""bri"": 200, ""sat"": 150, ""hue"": 30000 } }
                 }";
 
             var mockBridgeConnector = new Mock<IBridgeConnectorHueLights>();
@@ -194,7 +189,7 @@ namespace TestProject1
                 .Setup(b => b.GetAllLightIDsAsync())
                 .ReturnsAsync(jsonResponse);
 
-            ViewModel viewModel = new(new Mock<IPreferences>().Object, mockBridgeConnector.Object);
+            ViewModel viewModel = new (new Mock<IPreferences>().Object,mockBridgeConnector.Object);
 
             await viewModel.GetLights();
 
@@ -202,10 +197,9 @@ namespace TestProject1
         }
 
         [Fact]
-        public async Task SetLightColorCheckNullTest()
-        {
+        public async Task SetLightColorCheckNullTest() {
             var mockBridgeConnector = new Mock<IBridgeConnectorHueLights>();
-            ViewModel viewModel = new(new Mock<IPreferences>().Object, mockBridgeConnector.Object)
+            ViewModel viewModel = new (new Mock<IPreferences>().Object,mockBridgeConnector.Object)
             {
                 SelectedLamp = null // Geen lamp geselecteerd
             };
@@ -216,14 +210,13 @@ namespace TestProject1
         }
 
         [Fact]
-        public async Task SetLightColorDeviceIsOffTest()
-        {
+        public async Task SetLightColorDeviceIsOffTest() {
             var mockBridgeConnector = new Mock<IBridgeConnectorHueLights>();
             mockBridgeConnector
                 .Setup(b => b.SetLighColorAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>()))
                 .ReturnsAsync("error: Device is set to off");
 
-            ViewModel viewModel = new(new Mock<IPreferences>().Object, mockBridgeConnector.Object)
+            ViewModel viewModel = new (new Mock<IPreferences>().Object, mockBridgeConnector.Object)
             {
                 SelectedLamp = new Lamp(1, true, 200, 150, 30000)
             };
@@ -241,7 +234,7 @@ namespace TestProject1
                 .Setup(b => b.SetLighColorAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>()))
                 .ReturnsAsync("error: connection failed");
 
-            ViewModel viewModel = new(new Mock<IPreferences>().Object, mockBridgeConnector.Object)
+            ViewModel viewModel = new (new Mock<IPreferences>().Object,mockBridgeConnector.Object)
             {
                 SelectedLamp = new Lamp(1, true, 200, 150, 30000)
             };
