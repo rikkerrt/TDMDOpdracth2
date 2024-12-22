@@ -12,15 +12,15 @@ namespace HUELampenOpdracht2.HUELampen.Domain.Models
 
         public bool IsOn { get; set; }
         public int Brightness { get; set; }
-        public int Opacity { get; set; }
+        public int Saturation { get; set; }
         public int Hue { get; set; }
 
-        public HUELight(int id, bool ison, int brightness, int opacity, int hue)
+        public HUELight(int id, bool ison, int brightness, int saturation, int hue)
         {
             HUELightID = id;
             IsOn = ison;
             Brightness = brightness;
-            Opacity = opacity;
+            Saturation = saturation;
             Hue = hue;
         }
     }

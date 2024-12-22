@@ -5,10 +5,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Text.Json;
-using HUELampen.Infrastructure;
-using HUELampen.Domain;
 using static Microsoft.Maui.ApplicationModel.Permissions;
 using HUELampenOpdracht2.HUELampen.Domain.Models;
+using HUELampenOpdracht2.HUELampen.Infrastructure;
 
 
 namespace HUELampenOpdracht2.HUELampen.ViewModel
@@ -41,7 +40,7 @@ namespace HUELampenOpdracht2.HUELampen.ViewModel
         [ObservableProperty]
         private int _hue;
         [ObservableProperty]
-        private int _opacity;
+        private int _saturation;
         [ObservableProperty]
         private int _brightness;
         [ObservableProperty]
@@ -142,14 +141,14 @@ namespace HUELampenOpdracht2.HUELampen.ViewModel
         public async Task SetLightColor()
         {
             int hue = Hue >= 0 && Hue <= 65535 ? Hue : 0;
-            int opacity = Opacity >= 0 && Opacity <= 255 ? Opacity : 0;
+            int saturation = Saturation >= 0 && Saturation <= 255 ? Saturation : 0;
             int brightness = Brightness >= 0 && Brightness <= 255 ? Brightness : 0;
 
             if (SelectedLight == null)
                 return;
 
 
-            var result = await BridgeConnector.SetLightColorAsync(SelectedLight.HUELightID.ToString(), SelectedLight.Hue, SelectedLight.Opacity, SelectedLight.Brightness, SelectedLight.IsOn);
+            var result = await BridgeConnector.SetLightColorAsync(SelectedLight.HUELightID.ToString(), SelectedLight.Hue, SelectedLight.Saturation, SelectedLight.Brightness, SelectedLight.IsOn);
             if (result.Contains("error") && result.Contains("Device is set to off"))
             {
                 StatusApp = "light is turned off";

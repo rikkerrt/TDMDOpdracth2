@@ -1,5 +1,4 @@
-﻿using HUELampen.Infrastructure.BridgeConnection;
-using HUELampenOpdracht2.HUELampen.Domain.Models;
+﻿using HUELampenOpdracht2.HUELampen.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,7 +11,7 @@ namespace HUELampenOpdracht2.HUELampen.Infrastructure
 {
     public class HueBridgeConnector : IBridgeConnector
     {
-        private static HttpClient _httpClient;
+        private static HttpClient _httpClient = null;
         private IPreferences preferences;
         private FetchUsername fetchUsername;
 
@@ -22,6 +21,7 @@ namespace HUELampenOpdracht2.HUELampen.Infrastructure
             this.fetchUsername = fetchUsername;
             _httpClient = httpClient;
         }
+
         public async Task<string> GetAllLightIDsAsync()
         {
             Debug.WriteLine("Fetching HUE Lights");
@@ -103,15 +103,15 @@ namespace HUELampenOpdracht2.HUELampen.Infrastructure
             }
         }
 
-        public async Task<string> SetLightColorAsync(string id, int hue, int opacity, int brightness, bool isOn)
+        public async Task<string> SetLightColorAsync(string id, int hue, int saturation, int brightness, bool isOn)
         {
             try
             {
                 var response = await _httpClient.PutAsJsonAsync($"{preferences.Get("username", string.Empty)}/lights/{id}/state", new
                 {
                     on = isOn,
-                    opacity = opacity,
-                    brightness = brightness,
+                    sat = saturation,
+                    bri = brightness,
                     hue = hue,
                 });
                 response.EnsureSuccessStatusCode();
