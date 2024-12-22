@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace HUELampenOpdracht2.HUELampen.Domain.Models
 {
-    public interface IBridgeConnector
+    public interface IBridgeController
     {
         Task<string> SendApiLinkAsync();
         void SetConnectionType(ConnectionType connection);
         Task<string> GetAllLightIDsAsync();
-        Task<string> SetLightColorAsync(string id,int hue, int opacity,int brightness,bool isOn);
+        Task<string> SetLightColorAsync(string id,int hue, int saturation,int brightness,bool isOn);
     }
 }

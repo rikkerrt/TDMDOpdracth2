@@ -15,18 +15,17 @@ namespace HUELampenOpdracht2.HUELampen.ViewModel
 
     public partial class HUEappViewModel : ObservableObject
     {
-        private IBridgeConnector BridgeConnector;
+        private IBridgeController BridgeConnector;
         private ConnectionType _currentConnectionType = ConnectionType.None;
 
-        public HUEappViewModel(IPreferences preferences, IBridgeConnector bridgeConnectorHueLights)
+        public HUEappViewModel(IPreferences preferences, IBridgeController bridgeConnectorHueLights)
         {
             BridgeConnector = bridgeConnectorHueLights;
             lights = new ObservableCollection<HUELight>();
             IsBridgeButtonEnabled = true;
             IsEmulatorButtonEnabled = true;
         }
-        [ObservableProperty]
-        private string _statusApp;
+
         [ObservableProperty]
         private bool _isEmulatorButtonEnabled;
         [ObservableProperty]
@@ -62,19 +61,54 @@ namespace HUELampenOpdracht2.HUELampen.ViewModel
             IsBridgeButtonEnabled = false;
 
             var result = await BridgeConnector.SendApiLinkAsync();
+
             if (result.Contains("error"))
             {
-                StatusApp = "unable to make Connection " + result;
+                StatusApp = "Failed to establish connection " + result;
                 IsEmulatorButtonEnabled = true;
                 return;
             }
             else
             {
-                StatusApp = "Made a connection " + result;
+                StatusApp = "Connection succesfully established" + result;
+                return;
+            }
+        }
+
+        [RelayCommand]
+        public async Task GetLights()
+        {
+            var result = await BridgeConnector.GetAllLightIDsAsync();
+            if (result.Contains("error"))
+            {
+                StatusApp = "Retrying to connect " + result;
+                IsBridgeButtonEnabled = true;
+                IsEmulatorButtonEnabled = true;
                 return;
             }
 
+            JsonDocument jsondoc = JsonDocument.Parse(result);
+            var root = jsondoc.RootElement;
+            foreach (var lampElement in root.EnumerateObject())
+            {
+
+                var name = lampElement.Name;
+                Debug.WriteLine($"{name}");
+                var info = lampElement.Value;
+                var baseProperty = info.GetProperty("state");
+                var LampId = int.Parse(name);
+                var Saturation = baseProperty.GetProperty("sat").GetInt32();
+                var IsOn = baseProperty.GetProperty("on").GetBoolean();
+                var Brightness = baseProperty.GetProperty("bri").GetInt32();
+                var Hue = baseProperty.GetProperty("hue").GetInt32();
+                var hueLight = new HUELight(LampId, IsOn, Brightness, Saturation, Hue);
+                if (!lights.Contains(hueLight))
+                {
+                    lights.Add(hueLight);
+                }
+            }
         }
+
         [RelayCommand]
         public async Task SendApiBridge()
         {
@@ -87,55 +121,17 @@ namespace HUELampenOpdracht2.HUELampen.ViewModel
             var result = await BridgeConnector.SendApiLinkAsync();
             if (result.Contains("error"))
             {
-                StatusApp = "unable to make Connection " + result;
+                StatusApp = "Failed to establish connection " + result;
                 IsBridgeButtonEnabled = true;
                 return;
             }
             else
             {
-                StatusApp = "Made a connection " + result;
+                StatusApp = "Connection succesfully established" + result;
                 return;
             }
-
         }
-        [RelayCommand]
-        public async Task GetLights()
-        {
-            var result = await BridgeConnector.GetAllLightIDsAsync();
-            if (result.Contains("error"))
-            {
-                StatusApp = "retry Connecting " + result;
-                IsBridgeButtonEnabled = true;
-                IsEmulatorButtonEnabled = true;
-                return;
-            }
-            Debug.WriteLine("in lghts");
-            JsonDocument jsondoc = JsonDocument.Parse(result);
-            var root = jsondoc.RootElement;
-            Debug.WriteLine("voor array: " + root);
-            Debug.WriteLine("geparsed");
-
-            foreach (var lampElement in root.EnumerateObject())
-            {
-                Debug.WriteLine("in ");
-                var name = lampElement.Name;
-                Debug.WriteLine($"{name}");
-                var info = lampElement.Value;
-                var baseProperty = info.GetProperty("state");
-                var LampId = int.Parse(name);
-                var Saturation = baseProperty.GetProperty("sat").GetInt32();
-                var IsOn = baseProperty.GetProperty("on").GetBoolean();
-                var Brightness = baseProperty.GetProperty("bri").GetInt32();
-                var Hue = baseProperty.GetProperty("hue").GetInt32();
-                var hueLight = new HUELight(LampId, IsOn, Brightness, Saturation, Hue);
-                Debug.WriteLine("Lampieess");
-                if (!lights.Contains(hueLight))
-                {
-                    lights.Add(hueLight);
-                }
-            }
-
-        }
+        
 
         [RelayCommand]
         public async Task SetLightColor()
@@ -147,16 +143,15 @@ namespace HUELampenOpdracht2.HUELampen.ViewModel
             if (SelectedLight == null)
                 return;
 
-
             var result = await BridgeConnector.SetLightColorAsync(SelectedLight.HUELightID.ToString(), SelectedLight.Hue, SelectedLight.Saturation, SelectedLight.Brightness, SelectedLight.IsOn);
             if (result.Contains("error") && result.Contains("Device is set to off"))
             {
-                StatusApp = "light is turned off";
+                StatusApp = "Light off";
                 return;
             }
             else if (result.Contains("error"))
             {
-                StatusApp = "Retry Connecting " + result;
+                StatusApp = "Retrying to connect" + result;
                 IsBridgeButtonEnabled = true;
                 IsEmulatorButtonEnabled = true;
                 return;

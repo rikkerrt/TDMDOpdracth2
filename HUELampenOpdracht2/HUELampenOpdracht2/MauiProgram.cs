@@ -24,12 +24,13 @@ namespace HUELampenOpdracht2
 #endif
             builder.Services.AddSingleton<HUEappViewModel>();
             builder.Services.AddSingleton<MainPage>();
-            builder.Services.AddTransient<FetchUsername>();
             builder.Services.AddSingleton<HttpClient>();
-
             builder.Services.AddSingleton<IPreferences>(p => Preferences.Default);
-            builder.Services.AddSingleton<IBridgeConnector, HueBridgeConnector>();
+            builder.Services.AddSingleton<IBridgeController, HueBridgeController>();
 
+
+            builder.Services.AddTransient<FetchUsername>();
+  
             return builder.Build();
         }
     }

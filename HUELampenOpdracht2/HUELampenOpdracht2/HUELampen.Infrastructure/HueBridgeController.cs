@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace HUELampenOpdracht2.HUELampen.Infrastructure
 {
-    public class HueBridgeConnector : IBridgeConnector
+    public class HueBridgeController : IBridgeController
     {
         private static HttpClient _httpClient = null;
         private IPreferences preferences;
         private FetchUsername fetchUsername;
 
-        public HueBridgeConnector(IPreferences preferences, FetchUsername fetchUsername, HttpClient httpClient)
+        public HueBridgeController(IPreferences preferences, FetchUsername fetchUsername, HttpClient httpClient)
         {
             this.preferences = preferences;
             this.fetchUsername = fetchUsername;
@@ -42,6 +42,33 @@ namespace HUELampenOpdracht2.HUELampen.Infrastructure
                 Debug.WriteLine(ex.StackTrace);
                 return "Unmarked exception occured";
             } 
+        }
+        public async Task<string> SetLightColorAsync(string id, int hue, int saturation, int brightness, bool isOn)
+        {
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync($"{preferences.Get("username", string.Empty)}/lights/{id}/state", new
+                {
+                    on = isOn,
+                    sat = saturation,
+                    bri = brightness,
+                    hue = hue,
+                });
+                response.EnsureSuccessStatusCode();
+                string json = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine(json);
+                return json;
+            }
+            catch (HttpRequestException ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return "SetLight Method http request failed";
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return "SetLight Method error occured";
+            }
         }
 
         public async Task<string> SendApiLinkAsync()
@@ -103,32 +130,6 @@ namespace HUELampenOpdracht2.HUELampen.Infrastructure
             }
         }
 
-        public async Task<string> SetLightColorAsync(string id, int hue, int saturation, int brightness, bool isOn)
-        {
-            try
-            {
-                var response = await _httpClient.PutAsJsonAsync($"{preferences.Get("username", string.Empty)}/lights/{id}/state", new
-                {
-                    on = isOn,
-                    sat = saturation,
-                    bri = brightness,
-                    hue = hue,
-                });
-                response.EnsureSuccessStatusCode();
-                string json = await response.Content.ReadAsStringAsync();
-                Debug.WriteLine(json);
-                return json;
-            }
-            catch (HttpRequestException ex)
-            {
-                Debug.WriteLine(ex.Message);
-                return "SetLight Method http request failed";
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-                return "SetLight Method error occured";
-            }
-        }
+        
     }
 }
