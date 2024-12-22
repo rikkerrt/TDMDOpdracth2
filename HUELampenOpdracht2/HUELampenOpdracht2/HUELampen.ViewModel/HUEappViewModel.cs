@@ -45,6 +45,7 @@ namespace HUELampenOpdracht2.HUELampen.ViewModel
         [ObservableProperty]
         public ObservableCollection<HUELight> lights;
 
+
         [RelayCommand]
         public void SetSelectedLight(HUELight light)
         {
@@ -64,13 +65,11 @@ namespace HUELampenOpdracht2.HUELampen.ViewModel
 
             if (result.Contains("error"))
             {
-                StatusApp = "Failed to establish connection " + result;
                 IsEmulatorButtonEnabled = true;
                 return;
             }
             else
             {
-                StatusApp = "Connection succesfully established" + result;
                 return;
             }
         }
@@ -81,7 +80,6 @@ namespace HUELampenOpdracht2.HUELampen.ViewModel
             var result = await BridgeConnector.GetAllLightIDsAsync();
             if (result.Contains("error"))
             {
-                StatusApp = "Retrying to connect " + result;
                 IsBridgeButtonEnabled = true;
                 IsEmulatorButtonEnabled = true;
                 return;
@@ -121,13 +119,11 @@ namespace HUELampenOpdracht2.HUELampen.ViewModel
             var result = await BridgeConnector.SendApiLinkAsync();
             if (result.Contains("error"))
             {
-                StatusApp = "Failed to establish connection " + result;
                 IsBridgeButtonEnabled = true;
                 return;
             }
             else
             {
-                StatusApp = "Connection succesfully established" + result;
                 return;
             }
         }
@@ -144,14 +140,8 @@ namespace HUELampenOpdracht2.HUELampen.ViewModel
                 return;
 
             var result = await BridgeConnector.SetLightColorAsync(SelectedLight.HUELightID.ToString(), SelectedLight.Hue, SelectedLight.Saturation, SelectedLight.Brightness, SelectedLight.IsOn);
-            if (result.Contains("error") && result.Contains("Device is set to off"))
+            if (!result.Contains("error") && !result.Contains("Device is set to off"))
             {
-                StatusApp = "Light off";
-                return;
-            }
-            else if (result.Contains("error"))
-            {
-                StatusApp = "Retrying to connect" + result;
                 IsBridgeButtonEnabled = true;
                 IsEmulatorButtonEnabled = true;
                 return;

@@ -4,7 +4,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="HUELampenOpdracht2.MainPage"
              xmlns:viewmodel = "clr-namespace:HUELampenOpdracht2.HUELampen.ViewModel"
-             x:DataType="viewmodel:HUEappViewModel">
+             x:DataType="viewmodel:HUEappViewModel"
+             Background="White">
+            
 
     <ScrollView>
         <VerticalStackLayout
@@ -14,22 +16,25 @@
             <Label Text="Kies een Emulator of een fysieke HUE lamp door middel van de volgende knoppen."
                    Style="{StaticResource SubHeadline}" 
                    SemanticProperties.HeadingLevel="Level2" 
-                   SemanticProperties.Description="Start with choosing what you want to connect to" />
+                   SemanticProperties.Description="Start with choosing what you want to connect to" 
+                   TextColor="Black"/>
 
-            <HorizontalStackLayout Padding="100,0" Spacing="25">
+            <HorizontalStackLayout Padding="825,0" Spacing="25">
+
                 <Button x:Name="BTNConToEmulator" 
                         Text="Emulator" 
                         Command="{Binding SendApiLinkCommand}"
-                        HorizontalOptions="CenterAndExpand"
+                        HorizontalOptions="Center"
+                        BackgroundColor= "Red"
                         IsEnabled="{Binding IsEmulatorButtonEnabled}" />
-                
+
                 <Button x:Name="BTNConToBridge" 
                         Text="HUE Lamp" 
                         Command="{Binding SendApiBridgeCommand} " 
                         SemanticProperties.Hint="Verbind aan HUE Lamp"
-                        HorizontalOptions="CenterAndExpand" 
+                        HorizontalOptions="Center" 
+                        BackgroundColor="Red"
                         IsEnabled="{Binding IsBridgeButtonEnabled}" />
-                
             </HorizontalStackLayout>
 
             <Button x:Name="BTNGetLights" 
@@ -39,75 +44,84 @@
 
             <CollectionView ItemsSource="{Binding Lights}"
                             SelectedItem="{Binding SelectedLight}">
-                
+
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Frame BorderColor="#FF0000" 
+                               BackgroundColor="DarkGray"
                                Padding="10" 
                                Margin="5">
-                            
-                            <HorizontalStackLayout>
 
-                                <Label Text="{Binding LightId, StringFormat='Nummer lamp: {0}'}" 
-                                       FontSize="Small" />
-                                
+                            <VerticalStackLayout>
+
+                                <Label Text="{Binding LightId, StringFormat='Nummer lamp: {0}'} " 
+                                       FontSize="Small"
+                                       TextColor="White"/>
+
                                 <Label Text="{Binding Hue,StringFormat='Hue: {0}'}" 
                                        FontSize="Small" />
-                                
-                                <Label Text="{Binding Saturation, StringFormat='Verzadiging: {0}'}" 
-                                       FontSize="Small" />
-                                
-                                <Label Text="{Binding Brightness, StringFormat='Helderheid: {0}'}"
-                                       FontSize="Small" />
+
+                                <Label Text="{Binding Saturation, StringFormat='Verzadiging: {0}'} " 
+                                       FontSize="Small" 
+                                       TextColor="White"/>
+
+                                <Label Text="{Binding Brightness, StringFormat='Helderheid: {0}'} "
+                                       FontSize="Small" 
+                                       TextColor="White"/>
 
                                 <Button Text="Select Light"
                                     Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:HUEappViewModel}}, Path=SetSelectedLightCommand}"
                                     CommandParameter="{Binding .}" />
-                            </HorizontalStackLayout>
+                            </VerticalStackLayout>
                         </Frame>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
-
             <StackLayout IsVisible="{Binding SelectedLight}" 
                          Spacing="25">
+                
                 <Label Text="Geselecteerde Lamp:" 
-                       FontSize="Medium" />
-                <Label Text="{Binding SelectedLight.HUELightID}" 
-                       FontSize="Small" />
+                       FontSize="Medium" 
+                       TextColor="White"/>
 
-                <Label Text="Hue"/>
+                <Label Text= "Lamp aan of uit"
+                       TextColor="White"/>
+                <Switch IsToggled="{Binding SelectedLight.IsOn, 
+                            Mode=TwoWay}" />
+
+                <Label Text="{Binding SelectedLight.HUELightID}" 
+                       FontSize="Small" 
+                       TextColor="Black"/>
+
+                <Label Text="Hue"
+                       TextColor="Black"/>
                 <Entry x:Name="HueValue"
                        Keyboard="Numeric"
-                       Text="{Binding SelectedLight.Hue}"/>
-                <Label Text="{Binding SelectedLight.Hue}" 
-                       FontSize="Small"/>
+                       Placeholder="Hue"
+                       Text="{Binding SelectedLight.Hue}"
+                       BackgroundColor="DarkGray"/>
 
-                <Label Text="Verzadiging"/>
+                <Label Text="Verzadiging"
+                       TextColor="Black"/>
                 <Entry x:Name="satValue"
+                       Placeholder ="Verzadiging"
                        Keyboard="Numeric"
-                       Text="{Binding SelectedLight.Saturation}"/>
-                <Label Text="{Binding SelectedLight.Saturation}" 
-                       FontSize="Small"/>
-                
-                <Label Text ="Helderheid"/>
+                       Text="{Binding SelectedLight.Saturation}"
+                       BackgroundColor="DarkGray"/>
+
+                <Label Text ="Helderheid"
+                       TextColor="Black"/>
                 <Entry x:Name="briValue"
+                       Placeholder="Helderheid"
                        Keyboard="Numeric"
+                       BackgroundColor="DarkGray"
                        Text="{Binding SelectedLight.Brightness}"/>
-                <Label Text="{Binding SelectedLight.Brightness}" 
-                       FontSize="Small"/>
-
-
-                <Switch IsToggled="{Binding SelectedLight.IsOn, Mode=TwoWay}" />
-
 
                 <Button Text="Bevestig verandering" 
                         Command="{Binding SetLightColorCommand}" 
                         HorizontalOptions="Fill" />
             </StackLayout>
-
         </VerticalStackLayout>
     </ScrollView>
-
 </ContentPage>
