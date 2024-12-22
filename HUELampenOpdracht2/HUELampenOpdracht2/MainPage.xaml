@@ -16,7 +16,7 @@
             <Label Text="Kies een Emulator of een fysieke HUE lamp door middel van de volgende knoppen."
                    Style="{StaticResource SubHeadline}" 
                    SemanticProperties.HeadingLevel="Level2" 
-                   SemanticProperties.Description="Start with choosing what you want to connect to" 
+                   SemanticProperties.Description="Begin met het kiezen van de connectie die gemaakt moet worden" 
                    TextColor="Black"/>
 
             <HorizontalStackLayout Padding="825,0" Spacing="25">
@@ -40,6 +40,7 @@
             <Button x:Name="BTNGetLights" 
                     Text="Haal info van selectie op" 
                     Command="{Binding GetLightsCommand}" 
+                    BackgroundColor="Red"
                     HorizontalOptions="Fill" />
 
             <CollectionView ItemsSource="{Binding Lights}"
@@ -47,7 +48,7 @@
 
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Frame BorderColor="#FF0000" 
+                        <Frame BorderColor="Black" 
                                BackgroundColor="DarkGray"
                                Padding="10" 
                                Margin="5">
@@ -59,7 +60,8 @@
                                        TextColor="White"/>
 
                                 <Label Text="{Binding Hue,StringFormat='Hue: {0}'}" 
-                                       FontSize="Small" />
+                                       FontSize="Small" 
+                                       TextColor="White"/>
 
                                 <Label Text="{Binding Saturation, StringFormat='Verzadiging: {0}'} " 
                                        FontSize="Small" 
@@ -70,6 +72,7 @@
                                        TextColor="White"/>
 
                                 <Button Text="Select Light"
+                                        BackgroundColor="Red"
                                     Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:HUEappViewModel}}, Path=SetSelectedLightCommand}"
                                     CommandParameter="{Binding .}" />
                             </VerticalStackLayout>
@@ -119,6 +122,7 @@
                        Text="{Binding SelectedLight.Brightness}"/>
 
                 <Button Text="Bevestig verandering" 
+                        BackgroundColor="Red"
                         Command="{Binding SetLightColorCommand}" 
                         HorizontalOptions="Fill" />
             </StackLayout>
